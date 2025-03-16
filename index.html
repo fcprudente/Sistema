@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pacientes</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        /* Estilos para o formulário */
+        #formulario-cadastro {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        #formulario-cadastro h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        /* Estilos para as abas */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 25px;
+        }
+        
+        .tab-button {
+            padding: 12px 20px;
+            background-color: #f8f9fa;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #6c757d;
+            transition: all 0.2s;
+        }
+        
+        .tab-button:hover {
+            background-color: #e9ecef;
+        }
+        
+        .tab-button.active {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            background-color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Container para campos lado a lado com espaçamento */
+        .form-row-container {
+            display: flex;
+            gap: 2cm;
+            margin-bottom: 20px;
+        }
+        
+        .form-row-container .form-col-medium {
+            flex: 0 0 calc(50% - 1cm);
+        }
+        
+        .form-row-container .form-col-small {
+            flex: 0 0 180px;
+        }
+        
+        /* Container para nome e data de nascimento */
+        .nome-data-container {
+            display: flex;
+            gap: 2cm;
+            margin-bottom: 20px;
+        }
+        
+        .nome-data-container .form-col-medium {
+            flex: 0 0 calc(50% - 1cm);
+        }
+        
+        .nome-data-container .form-col-small {
+            flex: 0 0 200px;
+        }
+        
+        /* Container para idade e email */
+        .idade-email-container {
+            display: flex;
+            gap: 2cm;
+            margin-bottom: 20px;
+        }
+        
+        .idade-email-container .form-col-small {
+            flex: 0 0 120px;
+        }
+        
+        .idade-email-container .form-col-medium {
+            flex: 0 0 calc(50% - 1cm);
+        }
+        
+        /* Estilos melhorados para o endereço */
+        .endereco-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .endereco-container h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-col-small {
+            flex: 0 0 180px;
+        }
+        
+        .form-col-medium {
+            flex: 0 0 48%;
+        }
+        
+        /* Espaçamento específico entre número e complemento */
+        .numero-complemento-container {
+            display: flex;
+            gap: 2cm; /* Espaço de 2cm entre os campos */
+            margin-bottom: 20px;
+        }
+        
+        .numero-complemento-container .form-col-small {
+            flex: 0 0 180px;
+        }
+        
+        .numero-complemento-container .form-col-medium {
+            flex: 0 0 calc(50% - 1cm); /* Metade da largura menos metade do gap */
+        }
+        
+        /* Espaçamento específico entre cidade e UF */
+        .cidade-uf-container {
+            display: flex;
+            gap: 2cm; /* Espaço de 2cm entre os campos */
+            margin-bottom: 20px;
+        }
+        
+        .cidade-uf-container .form-col-medium {
+            flex: 0 0 calc(50% - 1cm); /* Metade da largura menos metade do gap */
+        }
+        
+        .cidade-uf-container .form-col-small {
+            flex: 0 0 180px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        
+        /* Estilos para os botões */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button[type="submit"] {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+        
+        button[type="button"] {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        button[type="button"]:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Estilos para a tabela */
+        .pacientes-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .pacientes-grid th, .pacientes-grid td {
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .pacientes-grid th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .pacientes-grid tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .pacientes-grid tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .acoes button {
+            padding: 8px 12px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .acoes button:first-child {
+            background-color: #3498db;
+            margin-right: 20px; /* Aumentando o espaçamento entre os botões de 15px para 20px */
+        }
+        
+        .acoes button:last-child {
+            background-color: #e74c3c;
+        }
+        
+        .sem-pacientes {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        /* Estilos para o footer */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+        
+        /* Estilos para elementos ocultos inicialmente */
+        .hidden {
+            display: none;
+        }
+        
+        /* Estilos para textareas */
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+        
+        /* Estilos para campos do histórico */
+        .historico-field {
+            max-width: 85%;
+            margin: 0 auto;
+        }
+        
+        /* Estilos para os botões de rádio */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+        
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        
+        .radio-label input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        /* Estilos para campos de convênio na mesma linha */
+        .convenio-row {
+            display: flex;
+            gap: 10%;
+            width: 100%;
+        }
+        
+        .convenio-col {
+            flex: 0 0 45%;
+        }
+        
+        /* Estilo para campo de valor da consulta */
+        .valor-consulta-container {
+            max-width: 15%;
+        }
+        
+        /* Estilo para o container do período de atendimento */
+        .periodo-container {
+            flex: 1;
+            margin-left: 20px;
+        }
+        
+        /* Estilo para o campo de quantidade de dias */
+        #campo-quantidade-dias {
+            margin-top: 10px;
+        }
+        
+        /* Estilo para limitar a largura do campo de quantidade de atendimentos */
+        .campo-qtd-atendimentos {
+            max-width: 15%;
+        }
+        
+        /* Estilos para o novo layout dos campos financeiros */
+        .periodo-qtd-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .periodo-qtd-col {
+            flex: 0 0 calc(50% - 10px);
+        }
+        
+        .valor-consulta-row {
+            width: 50%;
+            margin-bottom: 20px;
+        }
+        
+        /* Estilos para seções no Financeiro */
+        .form-section {
+            margin-bottom: 20px;
+        }
+        
+        .form-section h3 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Estilo específico para a seção de evolução */
+        .form-section.evolucao h3 {
+            color: #27ae60;
+            border-bottom-color: #27ae60;
+        }
+        
+        .form-section.evolucao textarea {
+            border-color: #e8f5e9;
+            background-color: #f8fff8;
+        }
+        
+        /* Estilo para o campo de anotações de evolução */
+        .evolucao-field {
+            max-width: 60%;
+            margin: 0 auto;
+        }
+        
+        /* Estilo para o container de data e anotações de evolução */
+        .evolucao-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+        
+        .evolucao-data {
+            flex: 0 0 200px;
+        }
+        
+        /* Estilos para a agenda */
+        .agenda-controles {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .agenda-navegacao {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .agenda-navegacao button {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #ced4da;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .agenda-navegacao button:hover {
+            background-color: #e9ecef;
+        }
+        
+        .agenda-navegacao h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        
+        .btn-nova-consulta {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-nova-consulta:hover {
+            background-color: #27ae60;
+        }
+        
+        .calendario {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .calendario-cabecalho {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        
+        .calendario-dias {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-auto-rows: minmax(120px, auto);
+            gap: 1px;
+            background-color: #e9ecef;
+        }
+        
+        .dia {
+            background-color: white;
+            padding: 10px;
+            min-height: 120px;
+            position: relative;
+        }
+        
+        .dia-numero {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .dia.outro-mes {
+            background-color: #f8f9fa;
+            color: #adb5bd;
+        }
+        
+        .dia.hoje {
+            background-color: #e8f4fd;
+        }
+        
+        .consulta {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .consulta:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Estilos para o container de botões no cabeçalho */
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Espaçamento uniforme entre os botões */
+        }
+        
+        /* Estilo base para todos os botões do cabeçalho */
+        .header-buttons button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 150px;
+            justify-content: center;
+            white-space: nowrap;
+            height: 40px;
+        }
+
+        /* Largura específica para o botão cadastrar-paciente */
+        #cadastrar-paciente {
+            width: 180px;
+        }
+
+        .header-buttons button i {
+            font-size: 16px;
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        /* Cores específicas para cada botão */
+        #home {
+            background-color: #3498db;
+        }
+        
+        #home:hover {
+            background-color: #2980b9;
+        }
+        
+        #cadastrar-paciente {
+            background-color: #3498db;
+        }
+        
+        #cadastrar-paciente:hover {
+            background-color: #2980b9;
+        }
+        
+        #agenda {
+            background-color: #3498db;
+        }
+        
+        #agenda:hover {
+            background-color: #2980b9;
+        }
+        
+        #relatorio {
+            background-color: #3498db;
+        }
+        
+        #relatorio:hover {
+            background-color: #2980b9;
+        }
+        
+        #faturamento {
+            background-color: #3498db;
+            margin-left: 0; /* Removendo margem específica */
+        }
+        
+        #faturamento:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Estilos para o modal de agendamento */
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            -webkit-backdrop-filter: blur(3px);
+            backdrop-filter: blur(3px);
+        }
+        
+        #modal-agendamento {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 660px; /* Aumentado em 10% de 600px */
+            max-width: 95%;
+            z-index: 1001;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 17px 21px; /* Reduzido em ~15% de 20px 25px */
+            border-bottom: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 19px; /* Reduzido em ~15% de 22px */
+            font-weight: 600;
+        }
+        
+        .fechar-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        
+        .fechar-modal:hover {
+            color: #e74c3c;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-row {
+            margin-bottom: 0;
+            width: 100%;
+        }
+        
+        .periodo-consulta-row {
+            margin-bottom: 10px;
+        }
+        
+        .horarios-row {
+            display: flex;
+            justify-content: flex-start;
+            gap: 113.4px; /* 3cm */
+            width: 100%;
+            margin: 0 0 10px 0;
+            position: relative;
+        }
+        
+        .horario-col {
+            flex: 0 0 auto;
+            max-width: 105px;
+        }
+        
+        /* Posicionamento específico para o horário de término */
+        .horario-col:nth-child(2) {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .google-sync {
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        
+        #modal-agendamento .modal-body {
+            padding: 20px;
+            gap: 15px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            gap: 15px;
+        }
+        
+        .horarios-row {
+            display: flex;
+            justify-content: flex-start;
+            gap: 113.4px; /* 3cm */
+            width: 100%;
+            margin: 0 0 10px 0;
+            position: relative;
+        }
+        
+        .horario-col {
+            flex: 0 0 auto;
+            max-width: 105px;
+        }
+        
+        /* Posicionamento específico para o horário de término */
+        .horario-col:nth-child(2) {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .btn-salvar {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 15px; /* Reduzido em ~15% de 10px 18px */
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 12px; /* Reduzido em ~15% de 14px */
+        }
+        
+        .btn-salvar:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+        }
+        
+        .btn-cancelar {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px; /* Reduzido em ~15% de 10px 18px */
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 12px; /* Reduzido em ~15% de 14px */
+        }
+        
+        .btn-cancelar:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(192, 57, 43, 0.2);
+        }
+        
+        .btn-excluir {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 8px 15px; /* Reduzido em ~15% de 10px 18px */
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-size: 12px; /* Reduzido em ~15% de 14px */
+        }
+        
+        .btn-excluir:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(211, 84, 0, 0.2);
+        }
+        
+        .btn-google {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            font-weight: 600;
+            transition: all 0.2s;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-google:hover {
+            background-color: #3367D6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(66, 133, 244, 0.2);
+        }
+        
+        .btn-google:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn-google:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        
+        .google-icon {
+            background-color: white;
+            color: #4285F4;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-style: normal;
+        }
+        
+        .google-sync {
+            margin-top: 20px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 20px;
+        }
+        
+        .btn-google.sincronizando {
+            background-color: #3367D6;
+            pointer-events: none;
+            position: relative;
+        }
+        
+        .btn-google.sincronizando:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            animation: loading 1.5s ease-in-out;
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        /* Estilo para consultas sincronizadas no calendário */
+        .consulta.sincronizada {
+            background-color: #27ae60;
+        }
+        
+        .consulta.sincronizada:hover {
+            background-color: #219653;
+        }
+        
+        /* Estilos para o ícone de calendário */
+        .fas.fa-calendar-plus {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        /* Melhorias para os campos de horário */
+        .horario-col {
+            flex: 0 0 auto;
+            max-width: 105px;
+            position: relative;
+        }
+        
+        .horario-col input[type="time"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #2c3e50;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        .horario-col input[type="time"]::-webkit-calendar-picker-indicator {
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+        }
+        
+        .horario-col input[type="time"]:hover {
+            border-color: #3498db;
+            background-color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+        
+        .horario-col input[type="time"]:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .horario-col label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .horario-col:hover label {
+            color: #3498db;
+        }
+        
+        /* Adicionar ícone personalizado */
+        .horario-col::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 65%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%233498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+        }
+        
+        /* Animação ao clicar */
+        .horario-col input[type="time"]:active {
+            transform: scale(0.98);
+        }
+        
+        /* Container dos horários com novo espaçamento */
+        .horarios-row {
+            display: flex;
+            gap: 25px;
+            justify-content: flex-start;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        /* Estilo para quando o campo está preenchido */
+        .horario-col input[type="time"]:not(:placeholder-shown) {
+            background-color: #f0f7ff;
+            border-color: #3498db;
+        }
+        
+        /* Estilos para o select de pacientes */
+        #paciente-consulta {
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 35px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        /* Estilo para limitar o tamanho do campo de data da consulta */
+        .data-consulta-container {
+            width: 40%;
+        }
+        
+        #data-consulta {
+            width: 100%;
+        }
+        
+        /* Estilos para limitar o tamanho dos campos de horário */
+        .horario-inicio-container,
+        .horario-fim-container {
+            width: 100%;
+            position: relative;
+        }
+        
+        #horario-inicio,
+        #horario-fim {
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        /* Estilos para as dicas de horário */
+        .horario-dica {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            background-color: #f8f9fa;
+            border: 1px solid #dde2e6;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            color: #6c757d;
+            z-index: 10;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Efeito para campos auto-preenchidos */
+        .auto-preenchido {
+            animation: highlight 2s ease;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #f8f9fa; }
+            30% { background-color: #e3f2fd; }
+            100% { background-color: #f8f9fa; }
+        }
+        
+        /* Estilo para o botão de sincronização com Google */
+        .google-sync {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn-google {
+            width: 50%;
+            min-width: 150px;
+            max-width: 50%;
+            margin: 0 auto;
+            padding: 10px 20px;
+        }
+        
+        /* Estilo para o campo de observações */
+        .observacoes-container {
+            width: 100%;
+            margin-top: 4px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #observacoes-consulta {
+            width: 100%;
+            min-height: 60px;
+            resize: vertical;
+            margin-top: 4px;
+        }
+        
+        /* Estilos para campos com erro */
+        .campo-erro {
+            border-color: #dc3545;
+        }
+        
+        /* Estilos para mensagens de erro */
+        .horario-erro {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* Estilos para duração da consulta */
+        .horario-duracao {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* Estilos para os controles de horário */
+        .horario-controles {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 5px;
+        }
+        
+        .horario-btn {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f0f7ff;
+            color: #3498db;
+            border: 1px solid #3498db;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .horario-btn:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* Ajuste para os campos de horário com botões */
+        .horario-inicio-container input[type="time"],
+        .horario-fim-container input[type="time"] {
+            padding-right: 65px;
+        }
+        
+        /* Estilos para campos com erro */
+        .campo-erro {
+            border-color: #dc3545;
+        }
+        
+        /* Estilo para o botão de relatório */
+        #relatorio {
+            background-color: #f39c12;
+            color: white;
+            margin-left: 2cm;
+        }
+        
+        #relatorio:hover {
+            background-color: #d35400;
+        }
+        
+        /* Estilos para o modal de relatório */
+        #modal-overlay-relatorio {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            -webkit-backdrop-filter: blur(3px);
+            backdrop-filter: blur(3px);
+        }
+        
+        #modal-relatorio {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 600px;
+            max-width: 90%;
+            z-index: 1001;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        /* Modificar o estilo do container do filtro de pacientes */
+        .filtro-container {
+            position: relative;
+            width: 70%;
+        }
+        
+        #filtro-paciente {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dde2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        
+        .lista-filtro {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #dde2e6;
+            border-radius: 0 0 8px 8px;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .item-paciente {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .item-paciente:hover {
+            background-color: #f0f7ff;
+        }
+        
+        #dados-relatorio {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        #dados-relatorio h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        #info-paciente, #historico-consultas {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-relatorio-pdf {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-relatorio-pdf:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(192, 57, 43, 0.2);
+        }
+        
+        .consulta-item {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .consulta-item:last-child {
+            border-bottom: none;
+        }
+        
+        .consulta-data {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .consulta-horario {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .consulta-obs {
+            margin-top: 5px;
+            font-style: italic;
+            color: #95a5a6;
+        }
+        
+        /* Media Queries para Responsividade */
+        @media (max-width: 1200px) {
+            main {
+                max-width: 95%;
+                padding: 0 15px;
+            }
+            
+            .form-row-container,
+            .nome-data-container,
+            .idade-email-container,
+            .numero-complemento-container,
+            .cidade-uf-container {
+                gap: 1cm;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            header {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            header h1 {
+                margin-bottom: 15px;
+            }
+            
+            .header-buttons {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .header-buttons button {
+                margin: 5px;
+            }
+            
+            #home, #agenda, #relatorio {
+                margin-left: 0;
+                margin-right: 0;
+            }
+            
+            .form-row-container,
+            .nome-data-container,
+            .idade-email-container,
+            .numero-complemento-container,
+            .cidade-uf-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .form-col-medium, 
+            .form-col-small {
+                flex: 0 0 100%;
+                width: 100%;
+            }
+            
+            .valor-consulta-container {
+                max-width: 100%;
+            }
+            
+            .valor-consulta-row {
+                width: 100%;
+            }
+            
+            .calendario-dias {
+                grid-template-columns: repeat(7, 1fr);
+                grid-auto-rows: minmax(100px, auto);
+            }
+            
+            .dia {
+                min-height: 100px;
+                padding: 8px;
+            }
+            
+            #modal-agendamento,
+            #modal-relatorio {
+                width: 90%;
+                max-width: 500px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            
+            .tab-button {
+                width: 100%;
+                border-bottom: 1px solid #ddd;
+                text-align: left;
+                padding: 10px 15px;
+            }
+            
+            .tab-button.active {
+                border-bottom: 1px solid #3498db;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .form-actions button {
+                width: 100%;
+            }
+            
+            .pacientes-grid th, 
+            .pacientes-grid td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+            
+            .acoes button {
+                padding: 6px 10px;
+                font-size: 12px;
+                margin-right: 5px;
+            }
+            
+            .calendario-cabecalho {
+                font-size: 14px;
+            }
+            
+            .dia-numero {
+                font-size: 14px;
+            }
+            
+            .consulta {
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+            
+            .modal-header h3 {
+                font-size: 16px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .horarios-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .horario-inicio-container,
+            .horario-fim-container,
+            .observacoes-container,
+            .data-consulta-container {
+                width: 100%;
+            }
+            
+            .btn-google {
+                width: 100%;
+            }
+            
+            /* Ajuste para o campo de filtro em telas menores */
+            .filtro-container {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            header h1 {
+                font-size: 20px;
+            }
+            
+            .header-buttons button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            #formulario-cadastro h2,
+            #lista-pacientes h2,
+            #container-agenda h2 {
+                font-size: 20px;
+            }
+            
+            .calendario-dias {
+                grid-template-columns: repeat(7, 1fr);
+                grid-auto-rows: minmax(70px, auto);
+            }
+            
+            .dia {
+                min-height: 70px;
+                padding: 5px;
+            }
+            
+            .consulta {
+                margin-bottom: 3px;
+                padding: 3px 5px;
+                font-size: 10px;
+            }
+            
+            /* Tabela responsiva para dispositivos pequenos */
+            .pacientes-grid {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .modal-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-footer button {
+                width: 100%;
+            }
+            
+            .btn-salvar, 
+            .btn-cancelar,
+            .btn-excluir {
+                padding: 8px 12px;
+            }
+            
+            /* Ajuste para o modal de relatório */
+            #filtro-paciente {
+                font-size: 14px;
+            }
+            
+            .item-paciente {
+                padding: 8px 12px;
+            }
+            
+            #dados-relatorio h4 {
+                font-size: 16px;
+            }
+            
+            .btn-relatorio-pdf {
+                width: 100%;
+            }
+        }
+        
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 400px) {
+            .header-buttons {
+                flex-direction: column;
+            }
+            
+            .header-buttons button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .calendario-cabecalho {
+                font-size: 12px;
+            }
+            
+            .dia-numero {
+                font-size: 12px;
+            }
+            
+            .consulta {
+                font-size: 9px;
+            }
+        }
+        
+        /* Adicionar estilo para o wrapper do filtro para centralizar */
+        .filtro-container-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .filtro-container {
+            position: relative;
+            width: 70%;
+        }
+        
+        /* Adicionar estilos para os checkboxes de filtro */
+        .filtro-opcoes {
+            margin-top: 20px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 15px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .checkbox-label:hover {
+            background-color: #e9ecef;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        /* Ajuste para telas menores */
+        @media (max-width: 768px) {
+            .checkbox-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .checkbox-label {
+                width: 100%;
+            }
+            
+            /* Ajuste para o campo de filtro em telas menores */
+            .filtro-container {
+                width: 100%;
+            }
+        }
+
+        /* Adicionar estilos para o período de consulta */
+        .periodo-consulta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 1cm;
+        }
+        
+        .periodo-col {
+            display: flex;
+            flex-direction: column;
+            width: calc(50% - 0.5cm);
+        }
+
+        .data-inicio-container,
+        .data-fim-container {
+            width: 100%;
+            position: relative;
+        }
+
+        #data-inicio,
+        #data-fim {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dde2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236c757d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 35px;
+        }
+
+        #data-inicio:hover,
+        #data-fim:hover {
+            border-color: #3498db;
+            background-color: #f0f7ff;
+        }
+
+        #data-inicio:focus,
+        #data-fim:focus {
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        /* Ajuste para telas menores */
+        @media (max-width: 768px) {
+            .periodo-consulta-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .periodo-col {
+                width: 100%;
+            }
+            
+            .data-inicio-container,
+            .data-fim-container {
+                width: 100%;
+            }
+        }
+
+        /* Adicionar seção de agendamento recorrente no modal */
+        .form-row replicar-row {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .replicar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-recorrente {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-recorrente input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-recorrente label {
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .recorrencia-options {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .recorrencia-info {
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        .recorrencia-qtd {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .recorrencia-qtd label {
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .recorrencia-qtd input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid #dde2e6;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-aplicar-recorrencia {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-aplicar-recorrencia:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.2);
+        }
+
+        /* Ajuste para telas menores */
+        @media (max-width: 768px) {
+            .replicar-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .recorrencia-qtd {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .recorrencia-qtd input,
+            .btn-aplicar-recorrencia {
+                width: 100%;
+            }
+        }
+
+        /* Adicionar estilo para o botão de recorrência aplicada */
+        .recorrencia-aplicada {
+            background-color: #219653 !important;
+        }
+        
+        .modal-body label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            padding: 12px 15px;
+            border: 1px solid #dde2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background-color: #f8f9fa;
+        }
+        
+        .modal-body input:focus,
+        .modal-body select:focus,
+        .modal-body textarea:focus {
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .modal-footer {
+            padding: 17px 21px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            background-color: #f8f9fa;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* Ajuste específico para o campo de filtro de pacientes no modal de relatório */
+        #modal-relatorio .form-row {
+            gap: 5px;
+            align-items: center;
+        }
+        
+        #modal-relatorio label[for="filtro-paciente"] {
+            margin-bottom: 0;
+            margin-right: 5px;
+        }
+
+        /* Ajuste para o container do filtro no modal de relatório */
+        #modal-relatorio .filtro-container-wrapper {
+            justify-content: flex-start;
+            margin-left: 0;
+        }
+        
+        #modal-relatorio .filtro-container {
+            width: 85%;
+        }
+
+        /* Estilo específico para a linha de filtro de pacientes */
+        .filtro-paciente-row {
+            display: flex;
+            align-items: center;
+            gap: 8px !important;
+            margin-bottom: 15px;
+        }
+        
+        .filtro-paciente-row label {
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .periodo-apuracao {
+            margin-bottom: 20px;
+        }
+
+        .periodo-apuracao label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .periodo-row {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .periodo-row .input-group {
+            flex: 1;
+        }
+
+        .periodo-row .input-group label {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .periodo-row input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .periodo-row input[type="date"]:focus {
+            border-color: #8e44ad;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.2);
+        }
+
+        .btn-faturamento {
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .btn-faturamento:hover {
+            background-color: #6c3483;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(142, 68, 173, 0.2);
+        }
+
+        /* Estilos para o modal de faturamento */
+        #modal-faturamento {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .periodo-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .fechar-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Estilos para o PDF */
+        .pdf-content {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .pdf-content h4 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        .pdf-content p {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        .pdf-content .consulta-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #3498db;
+        }
+
+        @media print {
+            .pdf-content {
+                padding: 0;
+            }
+        }
+
+        /* Estilos para a tabela de faturamento */
+        .faturamento-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .faturamento-table th,
+        .faturamento-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .faturamento-table th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 600;
+        }
+
+        .faturamento-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .faturamento-table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .faturamento-table tfoot {
+            background-color: #f1f3f5;
+        }
+
+        .faturamento-table tfoot td {
+            font-size: 1.1em;
+        }
+
+        #resultado-faturamento {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #resultado-faturamento p {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Estilo para o botão de Excel */
+        .btn-excel {
+            background-color: #217346;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-excel:hover {
+            background-color: #1e6339;
+        }
+
+        .btn-excel:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Ajustes específicos para o modal de agendamento */
+        #modal-agendamento {
+            width: 660px; /* Aumentado em 10% de 600px */
+            max-width: 95%;
+        }
+
+        #modal-agendamento .modal-body {
+            padding: 25px 30px;
+            gap: 25px;
+        }
+
+        #modal-agendamento .form-row {
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        /* Ajuste para o container de data da consulta */
+        .periodo-consulta-row .data-consulta-container {
+            width: 100%;
+            max-width: 105px; /* Reduzido em 30% de 150px */
+        }
+
+        /* Ajustes para a linha de horários */
+        .horarios-row {
+            display: flex;
+            justify-content: flex-start;
+            gap: 113.4px; /* 3cm */
+            width: 100%;
+            margin: 0 0 10px 0;
+            position: relative;
+        }
+
+        .horario-col {
+            flex: 0 0 auto;
+            max-width: 105px;
+        }
+
+        /* Posicionamento específico para o horário de término */
+        .horario-col:nth-child(2) {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Ajuste para o container de observações */
+        .observacoes-container {
+            width: 100%;
+            margin-top: 4px; /* Reduzido em 50% de 8px */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #observacoes-consulta {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+            margin-top: 4px; /* Reduzido em 50% de 8px */
+        }
+
+        /* Ajuste para o select de pacientes */
+        #paciente-consulta {
+            width: 100%;
+            max-width: 100%;
+            height: 45px;
+        }
+
+        /* Ajuste para o container de observações */
+        .observacoes-container {
+            width: 100%;
+            margin-top: 8px; /* Adicionado espaço entre a legenda e o campo */
+        }
+
+        #observacoes-consulta {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Ajuste para o botão do Google */
+        .google-sync {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-google {
+            width: 60%; /* Reduzido em 40% do tamanho original */
+            min-width: 150px; /* Reduzido de 250px para 150px */
+            max-width: 60%;
+            margin: 0 auto;
+        }
+
+        /* Estilos para inputs dentro do modal */
+        #modal-agendamento input,
+        #modal-agendamento select,
+        #modal-agendamento textarea {
+            height: 45px;
+            padding: 10px 15px;
+            font-size: 14px;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #dde2e6;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        #modal-agendamento textarea {
+            height: auto;
+        }
+
+        #modal-agendamento input:focus,
+        #modal-agendamento select:focus,
+        #modal-agendamento textarea:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: #fff;
+        }
+
+        #modal-agendamento label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        /* Ajustes para o footer do modal */
+        #modal-agendamento .modal-footer {
+            padding: 20px 30px;
+            gap: 20px;
+        }
+
+        #modal-agendamento .modal-footer button {
+            padding: 12px 24px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GestPac - Sistema de Gestão de Pacientes</h1>
+        <div class="header-buttons">
+            <button id="home"><i class="fas fa-home"></i> Home</button>
+            <button id="cadastrar-paciente"><i class="fas fa-user-plus"></i> Cadastrar Paciente</button>
+            <button id="agenda"><i class="fas fa-calendar-alt"></i> Agenda</button>
+            <button id="relatorio"><i class="fas fa-chart-bar"></i> Relatório</button>
+            <button id="faturamento"><i class="fas fa-file-invoice-dollar"></i> Faturamento</button>
+        </div>
+    </header>
+    <main>
+        <div id="formulario-cadastro" class="hidden">
+            <h2>Paciente</h2>
+            
+            <!-- Abas do formulário -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="dados-paciente">Dados do Paciente</button>
+                <button class="tab-button" data-tab="dados-responsavel">Informações do Responsável</button>
+                <button class="tab-button" data-tab="historico">Histórico</button>
+                <button class="tab-button" data-tab="financeiro">Financeiro</button>
+            </div>
+            
+            <form id="form-paciente">
+                <!-- Aba de Dados do Paciente -->
+                <div id="dados-paciente" class="tab-content active">
+                    <!-- Nome e Data de Nascimento lado a lado -->
+                    <div class="nome-data-container">
+                        <div class="form-col-medium">
+                            <label for="nome">Nome:</label>
+                            <input type="text" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-col-small">
+                            <label for="data_nascimento">Data de Nascimento:</label>
+                            <input type="date" id="data_nascimento" name="data_nascimento" required>
+                        </div>
+                    </div>
+
+                    <!-- Idade e Email lado a lado -->
+                    <div class="idade-email-container">
+                        <div class="form-col-small">
+                            <label for="idade">Idade:</label>
+                            <input type="number" id="idade" name="idade" required>
+                        </div>
+                        <div class="form-col-medium">
+                            <label for="email">E-mail:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+
+                    <!-- Telefone com meia linha -->
+                    <div class="form-row">
+                        <div class="form-col-medium">
+                            <label for="telefone">Telefone:</label>
+                            <input type="tel" id="telefone" name="telefone" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos de endereço com layout melhorado -->
+                    <div class="endereco-container">
+                        <h3>Endereço</h3>
+                        <div class="form-row">
+                            <div class="form-col-small">
+                                <label for="cep">CEP:</label>
+                                <input type="text" id="cep" name="cep" maxlength="9" placeholder="00000-000" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col-medium">
+                                <label for="logradouro">Logradouro:</label>
+                                <input type="text" id="logradouro" name="logradouro" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="numero-complemento-container">
+                            <div class="form-col-small">
+                                <label for="numero">Número:</label>
+                                <input type="text" id="numero" name="numero" required>
+                            </div>
+                            <div class="form-col-medium">
+                                <label for="complemento">Complemento:</label>
+                                <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, etc. (opcional)">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col-medium">
+                                <label for="bairro">Bairro:</label>
+                                <input type="text" id="bairro" name="bairro" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="cidade-uf-container">
+                            <div class="form-col-medium">
+                                <label for="cidade">Cidade:</label>
+                                <input type="text" id="cidade" name="cidade" readonly>
+                            </div>
+                            <div class="form-col-small">
+                                <label for="uf">UF:</label>
+                                <input type="text" id="uf" name="uf" maxlength="2" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aba de Informações do Responsável -->
+                <div id="dados-responsavel" class="tab-content">
+                    <div class="nome-data-container">
+                        <div class="form-col-medium">
+                            <label for="nome_responsavel">Nome do Responsável:</label>
+                            <input type="text" id="nome_responsavel" name="nome_responsavel">
+                        </div>
+                        <div class="form-col-small">
+                            <label for="parentesco">Parentesco:</label>
+                            <input type="text" id="parentesco" name="parentesco" placeholder="Ex: Pai, Mãe, Avô...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col-medium">
+                            <label for="telefone_responsavel">Telefone do Responsável:</label>
+                            <input type="tel" id="telefone_responsavel" name="telefone_responsavel">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col-medium">
+                            <label for="observacoes">Observações:</label>
+                            <textarea id="observacoes" name="observacoes" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba de Histórico -->
+                <div id="historico" class="tab-content">
+                    <!-- Seção de Histórico Médico -->
+                    <div class="form-section">
+                        <h3>Histórico Médico</h3>
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="doencas_previas">Doenças Prévias:</label>
+                                <textarea id="doencas_previas" name="doencas_previas" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="medicamentos">Medicamentos em Uso:</label>
+                                <textarea id="medicamentos" name="medicamentos" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="alergias">Alergias:</label>
+                                <textarea id="alergias" name="alergias" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="cirurgias">Cirurgias Anteriores:</label>
+                                <textarea id="cirurgias" name="cirurgias" rows="2"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="historico_familiar">Histórico Clínico:</label>
+                                <textarea id="historico_familiar" name="historico_familiar" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Evolução -->
+                    <div class="form-section evolucao">
+                        <h3>Evolução</h3>
+                        <div class="evolucao-row">
+                            <div class="evolucao-data">
+                                <label for="data_evolucao">Data:</label>
+                                <input type="date" id="data_evolucao" name="data_evolucao">
+                            </div>
+                            <div class="evolucao-field">
+                                <label for="evolucao">Anotações de Evolução:</label>
+                                <textarea id="evolucao" name="evolucao" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba de Financeiro -->
+                <div id="financeiro" class="tab-content">
+                    <!-- Seção de Convênio -->
+                    <div class="form-section">
+                        <h3>Informações de Convênio</h3>
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <label for="convenio">Convênio:</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="convenio" id="convenio_sim" value="SIM"> SIM
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="convenio" id="convenio_nao" value="NÃO" checked> NÃO
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="campos-convenio" class="hidden">
+                            <div class="form-row">
+                                <div class="form-col historico-field">
+                                    <div class="convenio-row">
+                                        <div class="convenio-col">
+                                            <label for="nome_convenio">Nome do Convênio:</label>
+                                            <input type="text" id="nome_convenio" name="nome_convenio">
+                                        </div>
+                                        <div class="convenio-col">
+                                            <label for="operadora_convenio">Operadora do Convênio:</label>
+                                            <input type="text" id="operadora_convenio" name="operadora_convenio">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de Período de Atendimento -->
+                    <div class="form-section">
+                        <h3>Informações de Atendimento</h3>
+                        <!-- Período e Quantidade na mesma linha -->
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <div class="periodo-qtd-row">
+                                    <div class="periodo-qtd-col">
+                                        <label for="periodo_atendimento">Período de Atendimento:</label>
+                                        <div class="radio-group">
+                                            <label class="radio-label">
+                                                <input type="radio" name="periodo_atendimento" id="periodo_determinado" value="Determinado"> Determinado
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="periodo_atendimento" id="periodo_indeterminado" value="Indeterminado" checked> Indeterminado
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="periodo-qtd-col">
+                                        <label for="quantidade_dias">Quantidade de Atendimentos:</label>
+                                        <input type="number" id="quantidade_dias" name="quantidade_dias" min="1" step="1" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Valor da Consulta em linha separada -->
+                        <div class="form-row">
+                            <div class="form-col historico-field">
+                                <div class="valor-consulta-row">
+                                    <label for="valor_consulta">Valor da Consulta (R$):</label>
+                                    <input type="number" id="valor_consulta" name="valor_consulta" step="0.01" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Salvar</button>
+                    <button type="button" id="cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Grid de pacientes -->
+        <div id="lista-pacientes">
+            <h2>Pacientes Cadastrados</h2>
+            <div id="grid-container">
+                <table class="pacientes-grid">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data de Nascimento</th>
+                            <th>Idade</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Responsável</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pacientes-dados">
+                        <!-- Os dados dos pacientes serão inseridos aqui via JavaScript -->
+                    </tbody>
+                </table>
+                <div id="sem-pacientes" class="sem-pacientes">
+                    Nenhum paciente cadastrado.
+                </div>
+            </div>
+        </div>
+
+        <!-- Container da Agenda -->
+        <div id="container-agenda" class="hidden">
+            <h2>Agenda de Consultas</h2>
+            <div class="agenda-controles">
+                <div class="agenda-navegacao">
+                    <button id="anterior-mes">◀</button>
+                    <h3 id="mes-ano-atual">Mês Ano</h3>
+                    <button id="proximo-mes">▶</button>
+                </div>
+                <button id="nova-consulta" class="btn-nova-consulta">Nova Consulta</button>
+            </div>
+            <div id="calendario" class="calendario">
+                <!-- O calendário será gerado dinamicamente via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Modal de Agendamento para Nova Consulta -->
+        <div id="modal-agendamento" class="hidden">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Agendar Consulta</h3>
+                <button class="fechar-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row periodo-consulta-row">
+                    <div class="periodo-col">
+                        <label for="data-consulta">Data da Consulta:</label>
+                        <div class="data-consulta-container">
+                            <input type="date" id="data-consulta" name="data-consulta" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row horarios-row">
+                    <div class="horario-col">
+                        <label for="horario-inicio">Horário de Início:</label>
+                        <div class="horario-inicio-container">
+                            <input type="time" id="horario-inicio" name="horario-inicio" required>
+                        </div>
+                    </div>
+                    <div class="horario-col">
+                        <label for="horario-fim">Horário de Término:</label>
+                        <div class="horario-fim-container">
+                            <input type="time" id="horario-fim" name="horario-fim" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="paciente-consulta">Selecione o Paciente:</label>
+                    <select id="paciente-consulta" name="paciente-consulta" required>
+                        <option value="">-- Selecione um paciente --</option>
+                        <!-- Opções serão preenchidas via JavaScript -->
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="observacoes-consulta">Observações da Consulta:</label>
+                    <div class="observacoes-container">
+                        <textarea id="observacoes-consulta" name="observacoes-consulta" rows="1" placeholder="Adicione informações relevantes sobre a consulta..."></textarea>
+                    </div>
+                </div>
+                <div class="form-row google-sync">
+                    <button id="sincronizar-google" class="btn-google">
+                        <i class="google-icon">G</i> Sincronizar com Google Agenda
+                    </button>
+                </div>
+                <!-- Opção de agendamento recorrente removida -->
+                <!-- <div class="form-row replicar-row">
+                    <div class="replicar-header">
+                        <label>Opções de replicação:</label>
+                        <div class="checkbox-recorrente">
+                            <input type="checkbox" id="agendamento-recorrente" name="agendamento-recorrente">
+                            <label for="agendamento-recorrente">Agendamento recorrente</label>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="modal-footer">
+                <button id="salvar-consulta" class="btn-salvar">Salvar Consulta</button>
+                <button id="excluir-agendamento" class="btn-excluir"><i class="fas fa-trash-alt"></i> Excluir Agendamento</button>
+                <button class="fechar-modal btn-cancelar">Cancelar</button>
+            </div>
+        </div>
+        <div id="modal-overlay" class="hidden"></div>
+
+        <!-- Adicionar o modal de relatório antes do fechamento da tag main -->
+        <div id="modal-relatorio" class="hidden">
+            <div class="modal-header">
+                <h3><i class="fas fa-chart-bar"></i> Relatório de Pacientes</h3>
+                <button class="fechar-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row filtro-paciente-row">
+                    <label for="filtro-paciente">Selecione o Paciente:</label>
+                    <div class="filtro-container-wrapper">
+                        <div class="filtro-container">
+                            <input type="text" id="filtro-paciente" placeholder="Digite para filtrar pacientes...">
+                            <div id="lista-pacientes-filtro" class="lista-filtro hidden">
+                                <!-- Lista de pacientes será preenchida via JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row filtro-opcoes">
+                    <label>Informações a serem exibidas:</label>
+                    <div class="checkbox-container">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="filtro-info" value="dados-paciente" checked> Dados do Paciente
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="filtro-info" value="dados-responsavel"> Informações do Responsável
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="filtro-info" value="historico"> Histórico
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="filtro-info" value="financeiro"> Financeiro
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="filtro-info" value="consultas" checked> Histórico de Consultas
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="dados-relatorio" class="hidden">
+                    <div id="secao-dados-paciente">
+                        <h4>Dados do Paciente</h4>
+                        <div id="info-paciente"></div>
+                    </div>
+                    
+                    <div id="secao-dados-responsavel" class="hidden">
+                        <h4>Informações do Responsável</h4>
+                        <div id="info-responsavel"></div>
+                    </div>
+                    
+                    <div id="secao-historico" class="hidden">
+                        <h4>Histórico</h4>
+                        <div id="info-historico"></div>
+                    </div>
+                    
+                    <div id="secao-financeiro" class="hidden">
+                        <h4>Financeiro</h4>
+                        <div id="info-financeiro"></div>
+                    </div>
+                    
+                    <div id="secao-consultas">
+                        <h4>Histórico de Consultas</h4>
+                        <div id="historico-consultas"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="gerar-pdf" class="btn-relatorio-pdf"><i class="fas fa-file-pdf"></i> Gerar PDF</button>
+                <button class="fechar-modal btn-cancelar">Fechar</button>
+            </div>
+        </div>
+        <div id="modal-overlay-relatorio" class="hidden"></div>
+
+        <!-- Modal de Faturamento -->
+        <div id="modal-faturamento" class="hidden">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-invoice-dollar"></i> Faturamento</h3>
+                <button class="fechar-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row periodo-apuracao">
+                    <label>Período de Apuração:</label>
+                    <div class="periodo-row">
+                        <div class="input-group">
+                            <label for="data-inicio-faturamento">Data Inicial:</label>
+                            <input type="date" id="data-inicio-faturamento" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="data-fim-faturamento">Data Final:</label>
+                            <input type="date" id="data-fim-faturamento" required>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultado-faturamento" class="hidden">
+                    <!-- Aqui será exibido o resultado do faturamento -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="gerar-faturamento" class="btn-primary">
+                    <i class="fas fa-file-invoice-dollar"></i> Gerar Faturamento
+                </button>
+                <button id="exportar-excel" class="btn-excel" disabled>
+                    <i class="fas fa-file-excel"></i> Exportar para Excel
+                </button>
+                <button class="fechar-modal btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 GestPac - Sistema de Gestão de Pacientes. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="js/pacientes.js"></script>
+    <script src="js/agenda.js"></script>
+    <script src="js/faturamento.js"></script>
+    <script src="js/relatorio.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Função auxiliar para adicionar event listener com segurança
+            function addSafeEventListener(element, event, handler) {
+                if (element) {
+                    element.addEventListener(event, handler);
+                } else {
+                    console.warn(`Elemento não encontrado ao tentar adicionar ${event} listener`);
+                }
+            }
+
+            // Declaração de todas as variáveis no início
+            const btnCadastrar = document.getElementById('cadastrar-paciente');
+            const btnAgenda = document.getElementById('agenda');
+            const btnHome = document.getElementById('home');
+            const btnRelatorio = document.getElementById('relatorio');
+            const btnCancelar = document.getElementById('cancelar');
+            const formulario = document.getElementById('formulario-cadastro');
+            const formPaciente = document.getElementById('form-paciente');
+            const listaPacientes = document.getElementById('lista-pacientes');
+            const containerAgenda = document.getElementById('container-agenda');
+            const modalRelatorio = document.getElementById('modal-relatorio');
+            const modalOverlayRelatorio = document.getElementById('modal-overlay-relatorio');
+
+            // Event Listeners para os botões principais
+            addSafeEventListener(btnHome, 'click', function() {
+                console.log('Botão Home clicado');
+                // Esconder todos os outros containers
+                formulario.classList.add('hidden');
+                containerAgenda.classList.add('hidden');
+                // Mostrar a lista de pacientes
+                listaPacientes.classList.remove('hidden');
+            });
+
+            addSafeEventListener(btnCadastrar, 'click', function() {
+                console.log('Botão Cadastrar clicado');
+                // Esconder outros containers
+                listaPacientes.classList.add('hidden');
+                containerAgenda.classList.add('hidden');
+                // Mostrar o formulário
+                formulario.classList.remove('hidden');
+            });
+
+            addSafeEventListener(btnAgenda, 'click', function() {
+                console.log('Botão Agenda clicado');
+                // Esconder outros containers
+                listaPacientes.classList.add('hidden');
+                formulario.classList.add('hidden');
+                // Mostrar a agenda
+                containerAgenda.classList.remove('hidden');
+                if (typeof atualizarCalendario === 'function') {
+                    atualizarCalendario();
+                }
+            });
+
+            addSafeEventListener(btnRelatorio, 'click', function() {
+                console.log('Botão Relatório clicado');
+                // Mostrar o modal de relatório
+                modalRelatorio.classList.remove('hidden');
+                modalOverlayRelatorio.classList.remove('hidden');
+            });
+
+            addSafeEventListener(btnCancelar, 'click', function() {
+                console.log('Botão Cancelar clicado');
+                // Esconder o formulário
+                formulario.classList.add('hidden');
+                // Mostrar a lista de pacientes
+                listaPacientes.classList.remove('hidden');
+                // Limpar o formulário
+                formPaciente.reset();
+            });
+            
+            // Fechar modal de relatório
+            const botoesFecharRelatorio = modalRelatorio.querySelectorAll('.fechar-modal');
+            botoesFecharRelatorio.forEach(btn => {
+                btn.addEventListener('click', () => {
+                modalRelatorio.classList.add('hidden');
+                modalOverlayRelatorio.classList.add('hidden');
+                });
+            });
+
+            // Fechar modal de relatório ao clicar no overlay
+            addSafeEventListener(modalOverlayRelatorio, 'click', function() {
+                modalRelatorio.classList.add('hidden');
+                modalOverlayRelatorio.classList.add('hidden');
+            });
+
+            // Evitar que cliques dentro do modal fechem ele
+            addSafeEventListener(modalRelatorio, 'click', function(e) {
+                e.stopPropagation();
+            });
+
+            // ... resto do código existente ...
+        });
+    </script>
+</body>
+</html>
